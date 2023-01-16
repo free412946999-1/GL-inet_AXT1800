@@ -51,15 +51,16 @@ jobs:
       env:
         DEBIAN_FRONTEND: noninteractive
       run: |
-        # sudo rm -rf /etc/apt/sources.list.d/* /usr/share/dotnet /usr/local/lib/android /opt/ghc
-        # sudo -E apt-get -qq update
-        # sudo -E apt-get -qq install python build-essential libncurses5-dev gawk git libssl-dev gettext zlib1g-dev swig unzip time rsync python3 python3-setuptools python3-yaml subversion -y
-        # sudo -E apt-get -qq autoremove --purge
-        # sudo -E apt-get -qq clean
+        sudo rm -rf /etc/apt/sources.list.d/* /usr/share/dotnet /usr/local/lib/android /opt/ghc
+        sudo -E apt-get -qq update
+        sudo -E apt-get -qq install python build-essential libncurses5-dev gawk git libssl-dev gettext zlib1g-dev swig unzip time rsync python3 python3-setuptools python3-yaml subversion -y
+        sudo -E apt-get -qq autoremove --purge
+        sudo -E apt-get -qq clean
         sudo timedatectl set-timezone "$TZ"
         sudo mkdir -p /workdir
         sudo chown $USER:$GROUPS /workdir
 
+<<<<<<< HEAD
     # - name: Clone source code
       # working-directory: /workdir
       # run: |
@@ -69,6 +70,17 @@ jobs:
         # ln -sf /workdir/gl-infra-builder $GITHUB_WORKSPACE/gl-infra-builder
         # cd $GITHUB_WORKSPACE
         # [ -e glinet-axt1800.yml ] && mv glinet-axt1800.yml /workdir/gl-infra-builder/profiles
+=======
+    - name: Clone source code
+      working-directory: /workdir
+      run: |
+        echo $PWD
+        echo $GITHUB_WORKSPACE
+        git clone $REPO_URL -b $REPO_BRANCH gl-infra-builder
+        ln -sf /workdir/gl-infra-builder $GITHUB_WORKSPACE/gl-infra-builder
+        cd $GITHUB_WORKSPACE
+        [ -e glinet-axt1800.yml ] && mv glinet-axt1800.yml /workdir/gl-infra-builder/profiles
+>>>>>>> parent of f516f3f (更新 build-glinet-axt1800.yml)
 
     # - name: run official setup.py
       # if: env.OFFICIAL == 'true'
@@ -114,7 +126,7 @@ jobs:
       run: |
         cd /workdir/gl-infra-builder/wlan-ap/openwrt
         echo -e "$(nproc) thread compile"
-        # make -j$(expr $(nproc) + 1) GL_PKGDIR=/workdir/glinet/ipq60xx/ V=s
+        make -j$(expr $(nproc) + 1) GL_PKGDIR=/workdir/glinet/ipq60xx/ V=s
         echo "::set-output name=status::success"
         grep '^CONFIG_TARGET.*DEVICE.*=y' .config | sed -r 's/.*DEVICE_(.*)=y/\1/' > DEVICE_NAME
         [ -s DEVICE_NAME ] && echo "DEVICE_NAME=_$(cat DEVICE_NAME)" >> $GITHUB_ENV
@@ -126,7 +138,7 @@ jobs:
       run: |
         cd /workdir/gl-infra-builder/wlan-ap/openwrt
         echo -e "$(nproc) thread compile"
-        # make -j$(expr $(nproc) + 1)  V=s
+        make -j$(expr $(nproc) + 1)  V=s
         echo "::set-output name=status::success"
         grep '^CONFIG_TARGET.*DEVICE.*=y' .config | sed -r 's/.*DEVICE_(.*)=y/\1/' > DEVICE_NAME
         [ -s DEVICE_NAME ] && echo "DEVICE_NAME=_$(cat DEVICE_NAME)" >> $GITHUB_ENV
