@@ -60,46 +60,46 @@ jobs:
         sudo mkdir -p /workdir
         sudo chown $USER:$GROUPS /workdir
 
-    - name: Clone source code
-      working-directory: /workdir
-      run: |
-        echo $PWD
-        echo $GITHUB_WORKSPACE
-        # git clone $REPO_URL -b $REPO_BRANCH gl-infra-builder
-        ln -sf /workdir/gl-infra-builder $GITHUB_WORKSPACE/gl-infra-builder
-        cd $GITHUB_WORKSPACE
-        [ -e glinet-axt1800.yml ] && mv glinet-axt1800.yml /workdir/gl-infra-builder/profiles
+    # - name: Clone source code
+      # working-directory: /workdir
+      # run: |
+        # echo $PWD
+        # echo $GITHUB_WORKSPACE
+        # # git clone $REPO_URL -b $REPO_BRANCH gl-infra-builder
+        # ln -sf /workdir/gl-infra-builder $GITHUB_WORKSPACE/gl-infra-builder
+        # cd $GITHUB_WORKSPACE
+        # [ -e glinet-axt1800.yml ] && mv glinet-axt1800.yml /workdir/gl-infra-builder/profiles
 
-    - name: run official setup.py
-      if: env.OFFICIAL == 'true'
-      run: |
-        cd /workdir/gl-infra-builder
-        git config --global user.name "github-actions[bot]"
-        git config --global user.email "github-actions[bot]@github.com"
-        python3 setup.py -c configs/config-wlan-ap.yml
-        cd /workdir/gl-infra-builder/wlan-ap/openwrt
-        ./scripts/gen_config.py glinet-axt1800 glinet_depends
-        git clone https://github.com/gl-inet/glinet4.x.git -b main /workdir/glinet
-        cp -r ~/work/GL-inet_AXT1800/GL-inet_AXT1800/etc/ ./package/base-files/files
-        ./scripts/feeds update -a
-        ./scripts/feeds install -a
-        make defconfig
-        cd /workdir/gl-infra-builder/wlan-ap/openwrt/files/etc
-        echo "$(date +"%Y.%m.%d")" >./glversion
-        echo " Bulid By@shejiewu " >./version.type
+    # - name: run official setup.py
+      # if: env.OFFICIAL == 'true'
+      # run: |
+        # cd /workdir/gl-infra-builder
+        # git config --global user.name "github-actions[bot]"
+        # git config --global user.email "github-actions[bot]@github.com"
+        # python3 setup.py -c configs/config-wlan-ap.yml
+        # cd /workdir/gl-infra-builder/wlan-ap/openwrt
+        # ./scripts/gen_config.py glinet-axt1800 glinet_depends
+        # git clone https://github.com/gl-inet/glinet4.x.git -b main /workdir/glinet
+        # cp -r ~/work/GL-inet_AXT1800/GL-inet_AXT1800/etc/ ./package/base-files/files
+        # ./scripts/feeds update -a
+        # ./scripts/feeds install -a
+        # make defconfig
+        # cd /workdir/gl-infra-builder/wlan-ap/openwrt/files/etc
+        # echo "$(date +"%Y.%m.%d")" >./glversion
+        # echo " Bulid By@shejiewu " >./version.type
 
-    - name: run setup.py
-      if: env.OFFICIAL == 'false'
-      run: |
-        cd /workdir/gl-infra-builder
-        git config --global user.name "github-actions[bot]"
-        git config --global user.email "github-actions[bot]@github.com"
-        python3 setup.py -c configs/config-wlan-ap.yml
-        cd /workdir/gl-infra-builder/wlan-ap/openwrt
-        ./scripts/gen_config.py glinet-axt1800 openwrt_common luci
-        ./scripts/feeds update -a
-        ./scripts/feeds install -a
-        make defconfig
+    # - name: run setup.py
+      # if: env.OFFICIAL == 'false'
+      # run: |
+        # cd /workdir/gl-infra-builder
+        # git config --global user.name "github-actions[bot]"
+        # git config --global user.email "github-actions[bot]@github.com"
+        # python3 setup.py -c configs/config-wlan-ap.yml
+        # cd /workdir/gl-infra-builder/wlan-ap/openwrt
+        # ./scripts/gen_config.py glinet-axt1800 openwrt_common luci
+        # ./scripts/feeds update -a
+        # ./scripts/feeds install -a
+        # make defconfig
 
     - name: SSH connection to Actions
       uses: P3TERX/ssh2actions@v1.0.0
